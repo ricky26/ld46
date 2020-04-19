@@ -78,7 +78,7 @@ public class Inventory: ScriptableObject
                 continue;
             }
 
-            if (existingStack.Value.Intersects(existingPos, position, size) && !existingStack.Value.CanMerge(stack))
+            if (existingStack.HasValue && existingStack.Value.Intersects(existingPos, position, size) && !existingStack.Value.CanMerge(stack))
             {
                 return false;
             }
@@ -96,11 +96,12 @@ public class Inventory: ScriptableObject
 
         for (var index = 0; index < stacks.Length; ++index)
         {
-            var existingStack = stacks[index];
+            var maybeStack = stacks[index];
             var existingPos = OffsetToPos(index);
-            if (existingStack.Value.Intersects(existingPos, insertPos, stack.itemType.size))
+            if (maybeStack.HasValue && maybeStack.Value.Intersects(existingPos, insertPos, stack.itemType.size))
             {
-                var ret = existingStack.Value.Merge(ref stack);
+                var existingStack = maybeStack.Value;
+                var ret = existingStack.Merge(ref stack);
                 stacks[index] = existingStack;
                 OnStacksChanged?.Invoke();
                 return ret;
@@ -127,12 +128,13 @@ public class Inventory: ScriptableObject
 
         for (var index = 0; index < stacks.Length; ++index)
         {
-            var existingStack = stacks[index];
+            var maybeStack = stacks[index];
             var existingPos = OffsetToPos(index);
 
-            if (existingStack.HasValue && existingStack.Value.CanMerge(stack))
+            if (maybeStack.HasValue && maybeStack.Value.CanMerge(stack))
             {
-                var ret = existingStack.Value.Merge(ref stack);
+                var existingStack = maybeStack.Value;
+                var ret = existingStack.Merge(ref stack);
                 stacks[index] = existingStack;
                 OnStacksChanged?.Invoke();
                 

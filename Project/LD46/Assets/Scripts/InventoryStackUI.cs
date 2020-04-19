@@ -36,7 +36,7 @@ public class InventoryStackUI: MonoBehaviour, IDragHandler, IBeginDragHandler, I
         }
     }
 
-    public bool CanAccept(Vector2 screenPos, InventoryStack stack, Vector2Int? draggedFrom)
+    public bool CanAccept(Vector2 screenPos, InventoryStack stack, object source)
     {
         return (canAccept != null) && canAccept(stack);
     }
@@ -46,9 +46,9 @@ public class InventoryStackUI: MonoBehaviour, IDragHandler, IBeginDragHandler, I
         return (accept != null) && accept(ref stack);
     }
     
-    public void ShowDragPreview(Vector2 screenPos, InventoryStack stack, Vector2Int? draggedFrom)
+    public void ShowDragPreview(Vector2 screenPos, InventoryStack stack, object source)
     {
-        background.color = CanAccept(screenPos, stack, draggedFrom) ? Color.green : Color.red;
+        background.color = CanAccept(screenPos, stack, source) ? Color.green : Color.red;
     }
 
     public void ClearDragPreview()
@@ -92,7 +92,7 @@ public class InventoryStackUI: MonoBehaviour, IDragHandler, IBeginDragHandler, I
         {
             //var cellPos = lastDragOver.WorldToCell(dragPreview.TopLeftFromMid(eventData.position));
             //var draggedFrom = (parentInventory && ReferenceEquals(lastDragOver, parentInventory)) ? stack.Value.position : (Vector2Int?)null;
-            lastDragOver.ShowDragPreview(eventData.position, stack.Value, null);// draggedFrom);
+            lastDragOver.ShowDragPreview(eventData.position, stack.Value, this);// draggedFrom);
         }
     }
 
@@ -115,7 +115,7 @@ public class InventoryStackUI: MonoBehaviour, IDragHandler, IBeginDragHandler, I
             //var oldPos = stack.position;
             //var cellPos = dragOverInventory.WorldToCell(dragPreview.TopLeftFromMid(eventData.position));
             //var draggedFrom = (parentInventory && ReferenceEquals(lastDragOver, parentInventory)) ? stack.position : (Vector2Int?)null;
-            if (lastDragOver.CanAccept(eventData.position, stack, null)) //draggedFrom))
+            if (lastDragOver.CanAccept(eventData.position, stack, this)) //draggedFrom))
             {
                 /*if (parentInventory)
                 {

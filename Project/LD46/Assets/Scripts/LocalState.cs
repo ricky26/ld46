@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class LocalState: MonoBehaviour
 {
@@ -47,12 +48,12 @@ public class LocalState: MonoBehaviour
         }
 
         var contents = File.ReadAllText(path);
-        return JsonUtility.FromJson<T>(contents);
+        return JsonConvert.DeserializeObject<T>(contents);
     }
 
     private void SaveJson(string path, object value)
     {
-        var contents = JsonUtility.ToJson(value);
+        var contents = JsonConvert.SerializeObject(value);
         File.WriteAllText(path, contents);
     }
 
@@ -64,13 +65,13 @@ public class LocalState: MonoBehaviour
         }
 
         var contents = File.ReadAllText(path);
-        return Deserialize(JsonUtility.FromJson<SerializedInventory>(contents));
+        return Deserialize(JsonConvert.DeserializeObject<SerializedInventory>(contents));
     }
 
     private void SaveInventory(string path, Inventory inventory)
     {
         var s = Serialize(inventory);
-        var contents = JsonUtility.ToJson(s);
+        var contents = JsonConvert.SerializeObject(s);
         File.WriteAllText(path, contents);
     }
 
@@ -91,12 +92,12 @@ public class LocalState: MonoBehaviour
             quantity = src.quantity,
         };
     }
-    private static InventoryStack? Deserialize(SerializedInventoryStack? src)
+    private InventoryStack? MaybeDeserialize(SerializedInventoryStack? src)
     {
         return src.HasValue ? Deserialize(src.Value) : (InventoryStack?)null;
     }
 
-    private static SerializedInventoryStack? Serialize(InventoryStack? src)
+    private static SerializedInventoryStack? MaybeSerialize(InventoryStack? src)
     {
         return src.HasValue ? Serialize(src.Value) : (SerializedInventoryStack?)null;
     }
@@ -104,7 +105,18 @@ public class LocalState: MonoBehaviour
     private Inventory Deserialize(SerializedInventory src)
     {
         var inventory = Inventory.Create(src.size);
-        inventory.stacks = src.stacks.Select(Deserialize).ToArray();
+        inventory.stacks = new InventoryStack?[src.size.x * src.size.y];
+        
+        for (var index = 0; index < inventory.stacks.Length; ++index)
+        {
+            if ((src.stacks == null) || (src.stacks.Length <= index))
+            {
+                break;
+            }
+
+            inventory.stacks[index] = MaybeDeserialize(src.stacks[index]);
+        }
+
         return inventory;
     }
 
@@ -113,7 +125,7 @@ public class LocalState: MonoBehaviour
         return new SerializedInventory
         {
             size = src.size,
-            stacks = src.stacks.Select(Serialize).ToArray(),
+            stacks = src.stacks.Select(MaybeSerialize).ToArray(),
         };
     }
 

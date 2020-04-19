@@ -8,6 +8,11 @@ public class BarracksDudeUI: MonoBehaviour
 
     private void OnEnable()
     {
+        if (!dude)
+        {
+            return;
+        }
+
         nameText.text = dude.name;
     }
 }

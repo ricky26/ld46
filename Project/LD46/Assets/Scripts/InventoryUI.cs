@@ -35,7 +35,6 @@ public class InventoryUI : MonoBehaviour, IAcceptInventory
         {
             Destroy(t.GetChild(i).gameObject);
         }
-        inventoryStacks = new InventoryStackUI[inventory.size.x * inventory.size.y];
 
         if (!inventory)
         {
@@ -48,6 +47,7 @@ public class InventoryUI : MonoBehaviour, IAcceptInventory
         cellWidth = cellRect.width;
         cellHeight = cellRect.height;
         cells = new Image[inventory.size.x * inventory.size.y];
+        inventoryStacks = new InventoryStackUI[inventory.size.x * inventory.size.y];
 
         for (int y = 0; y < inventory.size.y; ++y)
         {
@@ -97,13 +97,13 @@ public class InventoryUI : MonoBehaviour, IAcceptInventory
                 rectTransform.localPosition = pos;
 
                 stackUI.Stack = stack;
-                stackUI.canAccept = stack => inventory.CanInsertAt(position, stack, null);
-                stackUI.accept = (ref InventoryStack stack) => inventory.Insert(position, ref stack);
-                stackUI.setStack = stack =>
+                stackUI.canAccept = newStack => inventory.CanInsertAt(position, newStack, null);
+                stackUI.accept = (ref InventoryStack newStack) => inventory.Insert(position, ref newStack);
+                stackUI.setStack = newStack =>
                 {
-                    if (stack.HasValue)
+                    if (newStack.HasValue)
                     {
-                        inventory.Replace(position, stack.Value);
+                        inventory.Replace(position, newStack.Value);
                     }
                     else
                     {
@@ -129,21 +129,36 @@ public class InventoryUI : MonoBehaviour, IAcceptInventory
     public Vector2Int WorldToCell(Vector2 worldPos)
     {
         var localPos = inventoryContainer.InverseTransformPoint(worldPos);
-        var x = Mathf.RoundToInt((localPos.x / cellWidth) - 1);
-        var y = Mathf.RoundToInt((localPos.y / -cellHeight) - 1);
+        var x = Mathf.FloorToInt(localPos.x / cellWidth);
+        var y = Mathf.FloorToInt(localPos.y / -cellHeight);
         return new Vector2Int(x, y);
     }
 
-    public void ShowDragPreview(Vector2 screenPos, InventoryStack stack, Vector2Int? draggedFrom)
+    private Vector2Int? PosFromSource(object source)
     {
-        var cellPos = WorldToCell(screenPos);
-        ShowDragPreview(cellPos, stack, draggedFrom);
+        if (source == null)
+        {
+            return null;
+        }
+
+        for (int index = 0; index < inventoryStacks.Length; ++index)
+        {
+            var stack = inventoryStacks[index];
+            if (ReferenceEquals(stack, source))
+            {
+                return inventory.OffsetToPos(index);
+            }
+        }
+
+        return null;
     }
 
-    public bool ShowDragPreview(Vector2Int position, InventoryStack stack, Vector2Int? draggedFrom)
+    public void ShowDragPreview(Vector2 screenPos, InventoryStack stack, object source)
     {
         ClearDragPreview();
 
+        var position = WorldToCell(screenPos);
+        var draggedFrom = PosFromSource(source);
         var size = stack.itemType.size;
         var isValid = Inventory.ClampRect(inventory.size, ref position, ref size)
             && inventory.CanInsertAt(position, stack, draggedFrom);
@@ -159,8 +174,6 @@ public class InventoryUI : MonoBehaviour, IAcceptInventory
                 cells[cellOffset].color = isValid ? Color.green : Color.red;
             }
         }
-
-        return true;
     }
 
     public void ClearDragPreview()
@@ -175,9 +188,10 @@ public class InventoryUI : MonoBehaviour, IAcceptInventory
         }
     }
 
-    public bool CanAccept(Vector2 screenPos, InventoryStack stack, Vector2Int? draggedFrom)
+    public bool CanAccept(Vector2 screenPos, InventoryStack stack, object source)
     {
         var cellPos = WorldToCell(screenPos);
+        var draggedFrom = PosFromSource(source);
         return inventory.CanInsertAt(cellPos, stack, draggedFrom);
     }
 
