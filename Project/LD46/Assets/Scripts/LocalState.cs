@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 public class LocalState: MonoBehaviour
 {
@@ -23,6 +24,9 @@ public class LocalState: MonoBehaviour
 
     private void Start()
     {
+        // Workaround for AoT.
+        new List<SerializedInventoryStack?>();
+
         global = LoadJson(GlobalPath, () => GlobalSettings.Create());
 
         pockets = LoadInventory(PocketsPath) ?? Inventory.Create(new Vector2Int(7, 4));
