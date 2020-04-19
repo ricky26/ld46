@@ -159,6 +159,7 @@ public class Inventory: ScriptableObject
             if (CanInsertAt(existingPos, stack, null))
             {
                 stacks[index] = stack;
+                OnStacksChanged?.Invoke();
                 return true;
             }
         }

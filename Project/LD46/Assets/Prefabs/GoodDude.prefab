@@ -98,8 +98,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squad: {fileID: 0}
-  attackRange: 10
-  attackDamage: 40
+  attackRange: 18
+  attackDamage: 20
   attackInterval: 0.4
   canAttack: 1
   attackPrefab: {fileID: 3630923147340448256, guid: 6dabb95e0d1064849b94f643763ef889, type: 3}

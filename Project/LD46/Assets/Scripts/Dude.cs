@@ -87,13 +87,28 @@ public class Dude: MonoBehaviour, IAttackable
 
             if (squad?.goalTransform && ((bestPath == null) || (bestPath.dist > attackRange)))
             {
+                navAgent.isStopped = false;
                 navAgent.SetDestination(squad.goalTransform.position);
             }
             else if (bestPath != null)
             {
                 lastTarget = bestPath.dude;
                 navPath = lastTarget.navPath;
-                navAgent.SetDestination(lastTarget.transform.position);
+
+                if (bestPath.dist < attackRange)
+                {
+                    navAgent.isStopped = true;
+                }
+                else
+                {
+                    navAgent.isStopped = false;
+                    navAgent.SetDestination(lastTarget.transform.position);
+                }
+            }
+            else if (squad && squad?.team)
+            {
+                navAgent.isStopped = false;
+                navAgent.SetDestination(squad.team.EnemyMidPoint);
             }
         }
 

@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entries:
   - itemType: {fileID: 11400000, guid: a22d6de0d2e92264697c70b91c84f55e, type: 2}
-    minQuantity: 300
-    maxQuantity: 800
+    minQuantity: 1
+    maxQuantity: 250
     weight: 1

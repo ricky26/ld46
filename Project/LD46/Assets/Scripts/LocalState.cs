@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 public class LocalState: MonoBehaviour
 {
     public ItemTable itemTable;
+    public DudeConfig dudeConfig;
     public InventoryUI pocketsUI;
     public InventoryUI stashUI;
     public Inventory pockets;
@@ -32,10 +33,17 @@ public class LocalState: MonoBehaviour
         stash.name = "Stash";
         stash.OnStacksChanged.AddListener(SaveAll);
 
-        barracks = LoadJson(BarracksPath, () => Array.Empty<SerializedDude>()).Select(Deserialize).ToArray();
+        barracks = LoadJson<DudeLoadout[], SerializedDude[]>(BarracksPath, x => x.Select(Deserialize).ToArray(), CreateBarracks);
 
         pocketsUI?.SetInventory(pockets);
         stashUI?.SetInventory(stash);
+    }
+
+    private DudeLoadout[] CreateBarracks()
+    {
+        return Enumerable.Range(0, 10)
+            .Select(_ => DudeLoadout.GenerateNew(dudeConfig, itemTable))
+            .ToArray();
     }
 
     public void SaveAll()
@@ -61,7 +69,7 @@ public class LocalState: MonoBehaviour
         SaveJson(SquadPath, dudes.Select(Serialize).ToArray());
     }
 
-    public static T LoadJson<T>(string path, Func<T> factory)
+    public static T LoadJson<T, U>(string path, Func<U, T> convert, Func<T> factory)
     {
         if (!File.Exists(path))
         {
@@ -69,7 +77,12 @@ public class LocalState: MonoBehaviour
         }
 
         var contents = File.ReadAllText(path);
-        return JsonConvert.DeserializeObject<T>(contents);
+        return convert(JsonConvert.DeserializeObject<U>(contents));
+    }
+
+    public static T LoadJson<T>(string path, Func<T> factory)
+    {
+        return LoadJson<T, T>(path, x => x, factory);
     }
 
     public static void SaveJson(string path, object value)

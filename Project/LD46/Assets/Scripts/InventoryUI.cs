@@ -8,6 +8,7 @@ public class InventoryUI : MonoBehaviour, IAcceptInventory
     public GameObject cellPrefab;
     public GameObject stackPrefab;
     public RectTransform inventoryContainer;
+    public InventoryUI pairedInventoryUI;
     public Inventory pairedInventory;
 
     [SerializeField]
@@ -203,11 +204,12 @@ public class InventoryUI : MonoBehaviour, IAcceptInventory
         return inventory.Insert(cellPos, ref stack, draggedFrom);
     }
 
-    public bool TakeAll()
+    public void TakeAll()
     {
+        var pairedInventory = pairedInventoryUI ? pairedInventoryUI.inventory : this.pairedInventory;
         if (!pairedInventory)
         {
-            return false;
+            return;
         }
 
         for (int index = 0; index < inventory.stacks.Length; ++index)
@@ -222,10 +224,12 @@ public class InventoryUI : MonoBehaviour, IAcceptInventory
             if (!pairedInventory.InsertAnywhere(ref stack))
             {
                 inventory.stacks[index] = stack;
-                return false;
+                return;
             }
+
+            inventory.stacks[index] = null;
         }
 
-        return true;
+        inventory.OnStacksChanged?.Invoke();
     }
 }

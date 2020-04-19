@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class SquadSpawner: MonoBehaviour
@@ -8,6 +9,7 @@ public class SquadSpawner: MonoBehaviour
     public GameObject squadPrefab;
     public int minSquadMembers = 1;
     public int maxSquadMembers = 1;
+    public int numActiveSpawners = 3;
 
     public float squadSpawnMin = 1.0f;
     public float squadSpawnMax = 10.0f;
@@ -33,12 +35,18 @@ public class SquadSpawner: MonoBehaviour
             return;
         }
 
+        var isActive = FindObjectsOfType<SquadSpawner>()
+            .OrderBy(spawner => (spawner.transform.position - team.EnemyMidPoint).sqrMagnitude)
+            .Skip(1)
+            .Take(numActiveSpawners)
+            .Contains(this);
+
         if (leftToSpawnInSquad > 0)
         {
             // Spawn squad member.
             --leftToSpawnInSquad;
         }
-        else if (team.layDownArms)
+        else if (team.layDownArms || !isActive)
         {
             nextSpawnTime = now + Random.Range(squadSpawnMin, squadSpawnMax);
             return;

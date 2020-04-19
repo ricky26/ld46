@@ -17,7 +17,7 @@ public class DudeUI: MonoBehaviour
 
     private void Update()
     {
-        hpSlider.value = healthy.HPFraction;
-        name.text = target.gameObject.name;
+        hpSlider.value = healthy ? healthy.HPFraction : 0;
+        name.text = target ? target.gameObject?.name ?? "" : "";
     }
 }

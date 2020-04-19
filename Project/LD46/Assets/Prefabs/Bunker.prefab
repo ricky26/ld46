@@ -55,7 +55,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8154684329185488061}
   m_LocalRotation: {x: -0, y: -1, z: -0, w: -0.00000035762784}
-  m_LocalPosition: {x: 0.0000009536743, y: 0, z: -2.750001}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8154684330361319209}
@@ -76,12 +76,13 @@ MonoBehaviour:
   team: {fileID: 0}
   dudePrefab: {fileID: 1375602790162613691, guid: a252243deabf8a24d833c68a46df7d38, type: 3}
   squadPrefab: {fileID: 8669033001854198339, guid: 643e5108f6039154b8650eb95a3fa8f3, type: 3}
-  minSquadMembers: 3
-  maxSquadMembers: 7
+  minSquadMembers: 2
+  maxSquadMembers: 6
+  numActiveSpawners: 2
   squadSpawnMin: 2
-  squadSpawnMax: 7
-  dudeSpawnMin: 0.3
-  dudeSpawnMax: 0.8
+  squadSpawnMax: 10
+  dudeSpawnMin: 0.5
+  dudeSpawnMax: 0.9
 --- !u!1 &8154684330361319206
 GameObject:
   m_ObjectHideFlags: 0
