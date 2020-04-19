@@ -2,9 +2,11 @@
 
 public class GunController : MonoBehaviour
 {
+    public GunshipMovement gunshipMovement;
+
     private void Update()
     {
-        transform.rotation = Quaternion.LookRotation(new Vector3(0, -0.1f, 0)-transform.position.normalized);
+        transform.rotation = Quaternion.LookRotation(gunshipMovement.smoothFocalPoint - transform.position);
     }
 
     public void SetFiring(bool isFiring)

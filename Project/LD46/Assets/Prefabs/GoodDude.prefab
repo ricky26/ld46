@@ -104,6 +104,12 @@ MonoBehaviour:
   canAttack: 1
   attackPrefab: {fileID: 3630923147340448256, guid: 6dabb95e0d1064849b94f643763ef889, type: 3}
   visual: {fileID: 1143569503996468889}
+  loadout: {fileID: 0}
+  gunNoises:
+  - {fileID: 8300000, guid: 237a55b54cc704d4d99d621ca5c63b4f, type: 3}
+  - {fileID: 8300000, guid: 2378b8fee1461934d87bfe1e0a98c74c, type: 3}
+  - {fileID: 8300000, guid: af8a538206a1d4242b16c39c0bebe27e, type: 3}
+  - {fileID: 8300000, guid: 191ac5667dc93934696198183f09cbf8, type: 3}
 --- !u!1001 &5378549925903889795
 PrefabInstance:
   m_ObjectHideFlags: 0

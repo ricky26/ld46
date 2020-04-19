@@ -7,6 +7,12 @@ public class ExtractSquad : MonoBehaviour
     public Squad squad;
     public LocalState localState;
     public GameObject endGameScreen;
+    public GameObject animPrefab;
+
+    public void TriggerAnim()
+    {
+        Instantiate(animPrefab, transform.position, Quaternion.identity);
+    }
 
     public void Extract()
     {

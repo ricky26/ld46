@@ -13,6 +13,7 @@ public class Dude: MonoBehaviour, IAttackable
     public GameObject attackPrefab;
     public Transform visual;
     public DudeLoadout loadout;
+    public AudioClip[] gunNoises;
 
     private NavMeshAgent navAgent;
     private NavMeshPath navPath;
@@ -96,9 +97,15 @@ public class Dude: MonoBehaviour, IAttackable
             }
         }
 
-        if ((attackDelta >= attackInterval) && (lastTarget != null) && IsInRange(lastTarget))
+        if ((attackDelta >= attackInterval) && (lastTarget != null) && IsInRange(lastTarget) && lastTarget.isActiveAndEnabled)
         {
             lastAttack = now;
+
+            if (gunNoises?.Length > 0)
+            {
+                var clip = gunNoises[UnityEngine.Random.Range(0, gunNoises.Length)];
+                AudioSource.PlayClipAtPoint(clip, transform.position, 10f);
+            }
 
             var healthy = lastTarget.GetComponent<Healthy>();
             if (healthy)

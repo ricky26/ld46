@@ -6,13 +6,13 @@ public class Squad: MonoBehaviour
 {
     public Team team;
     public Transform goalTransform;
-    public UnityEvent<Objective> OnEnterObjective;
+    public UnityEvent<Objective, Dude> onEnterObjective;
     public Inventory inventory;
     public Vector2Int inventorySize;
 
-    public void TriggerEnterObjective(Objective objective)
+    public void TriggerEnterObjective(Objective objective, Dude dude)
     {
-        OnEnterObjective?.Invoke(objective);
+        onEnterObjective?.Invoke(objective, dude);
     }
 
     public void NewInventory()

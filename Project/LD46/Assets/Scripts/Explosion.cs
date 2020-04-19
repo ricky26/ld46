@@ -5,6 +5,7 @@ public class Explosion: MonoBehaviour
     public float explosionRadius = 0.0f;
     public float damage = 0.0f;
     public float lifetime = 1.0f;
+    public AudioClip[] soundEffects;
 
     private float spawnedAt = 0.0f;
 
@@ -12,7 +13,11 @@ public class Explosion: MonoBehaviour
     {
         spawnedAt = Time.time;
 
-        // Apply Damage?
+        if (soundEffects?.Length > 0)
+        {
+            var clip = soundEffects[Random.Range(0, soundEffects.Length)];
+            AudioSource.PlayClipAtPoint(clip, transform.position);
+        }
 
         var position = transform.position;
         foreach (var collider in Physics.OverlapSphere(position, explosionRadius))

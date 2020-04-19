@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public class GatlingGun : BaseGun
 {
@@ -13,6 +15,8 @@ public class GatlingGun : BaseGun
     public Transform barrel;
     public Transform firePoint;
     public Vector3 aimPoint;
+    public AudioClip[] gunNoises;
+    public ParticleSystem steamParticles;
 
     private Shell shellTemplate;
     private float barrelSpeed = 0.0f;
@@ -20,6 +24,7 @@ public class GatlingGun : BaseGun
     private float numRotations = 0.0f;
     private float heat = 0.0f;
     private bool isOverheating = false;
+    private List<AudioSource> gunAudioSources;
 
     public float Heat { get => heat; }
 
@@ -32,6 +37,7 @@ public class GatlingGun : BaseGun
     {
         base.Start();
 
+        gunAudioSources = new List<AudioSource>();
         shellTemplate = shellPrefab.GetComponentInChildren<Shell>();
     }
 
@@ -71,6 +77,8 @@ public class GatlingGun : BaseGun
             }
         }
 
+        var emission = steamParticles.emission;
+        emission.enabled = isOverheating;
         numRotations += barrelSpeed * dt;
 
         var firePos = firePoint ? firePoint.position : transform.position;
@@ -91,6 +99,32 @@ public class GatlingGun : BaseGun
             if (numToFire > 0)
             {
                 lastFired = numRotations;
+
+                if ((gunNoises?.Length ?? 0) > 0)
+                {
+                    var clipIndex = Random.Range(0, gunNoises.Length);
+                    var sourceIndex = Enumerable.Range(0, gunAudioSources.Count)
+                        .Where(idx => !gunAudioSources[idx].isPlaying)
+                        .Concat(new[] { -1 })
+                        .First();
+
+                    AudioSource source;
+                    if (sourceIndex >= 0)
+                    {
+                        source = gunAudioSources[sourceIndex];
+                        gunAudioSources.RemoveAt(sourceIndex);
+                    }
+                    else
+                    {
+                        var go = new GameObject("Gun Noiz");
+                        go.transform.SetParent(transform, false);
+                        source = go.AddComponent<AudioSource>();
+                    }
+
+                    var clip = gunNoises[clipIndex];
+                    source.clip = clip;
+                    source.Play();
+                }
 
                 for (var shellIdx = 0; shellIdx < numToFire; ++shellIdx)
                 {

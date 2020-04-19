@@ -46,13 +46,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   description: Extracting
   kind: 2
-  duration: 1
+  duration: 30
   activateRadius: 5
   hideDudes: 0
   disableAttacking: 0
   OnStart:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7492657910097441710}
+        m_TargetAssemblyTypeName: ExtractSquad, Assembly-CSharp
+        m_MethodName: TriggerAnim
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnEnd:
     m_PersistentCalls:
       m_Calls:
@@ -81,6 +93,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squad: {fileID: 0}
+  localState: {fileID: 0}
+  endGameScreen: {fileID: 0}
+  animPrefab: {fileID: 5137073564314280002, guid: d633c88a3a72cd84caf600e5c644ff84, type: 3}
 --- !u!1 &486059303223413874
 GameObject:
   m_ObjectHideFlags: 0
@@ -127,13 +142,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   description: Transferring Loot
   kind: 1
-  duration: 1
+  duration: 15
   activateRadius: 5
   hideDudes: 0
   disableAttacking: 0
   OnStart:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8099043390486581192}
+        m_TargetAssemblyTypeName: TransferLoot, Assembly-CSharp
+        m_MethodName: TriggerAnim
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnEnd:
     m_PersistentCalls:
       m_Calls:
@@ -164,6 +191,7 @@ MonoBehaviour:
   targetUI: {fileID: 0}
   toggleUI: {fileID: 0}
   objective: {fileID: 486059303223413876}
+  animPrefab: {fileID: 1068642007499550725, guid: 570f70d5ffe2bc541b021f62258680c7, type: 3}
 --- !u!1 &486059303527848540
 GameObject:
   m_ObjectHideFlags: 0

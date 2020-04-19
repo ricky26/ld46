@@ -47,6 +47,11 @@ MonoBehaviour:
   explosionRadius: 2
   damage: 80
   lifetime: 0.5
+  soundEffects:
+  - {fileID: 8300000, guid: 549e07ecaca87af4c9cb6b0111306f5a, type: 3}
+  - {fileID: 8300000, guid: d90b07dcabe66134d921fa8288fc2d9c, type: 3}
+  - {fileID: 8300000, guid: e905eea9446899348a7f68f61d23c5d2, type: 3}
+  - {fileID: 8300000, guid: 9a263f271d3a9c043857d35d6d4f3bac, type: 3}
 --- !u!1001 &8892316182391848347
 PrefabInstance:
   m_ObjectHideFlags: 0

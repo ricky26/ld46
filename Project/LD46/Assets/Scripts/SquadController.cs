@@ -16,6 +16,7 @@ public class SquadController: MonoBehaviour
     public LocalState localState;
     public GameObject dudePrefab;
     public Transform spawnLocation;
+    public GunshipMovement gunshipMovement;
 
     private ObjectiveKind? nextObjectiveKind;
     private Objective currentObjective;
@@ -46,7 +47,7 @@ public class SquadController: MonoBehaviour
         lastObjectiveWrite = 0;
         nextUpdate = Time.time;
 
-        squad.OnEnterObjective.AddListener(OnEnterObjective);
+        squad.onEnterObjective.AddListener(OnEnterObjective);
 
         foreach (var loadout in localState.LoadSquad())
         {
@@ -58,11 +59,19 @@ public class SquadController: MonoBehaviour
         }
     }
 
-    private void OnEnterObjective(Objective obj)
+    private void OnEnterObjective(Objective obj, Dude dude)
     {
-        if ((currentObjective == obj) && !obj.IsBusy)
+        if (currentObjective == obj)
         {
-            obj.Activate(squad);
+            if (!obj.IsBusy)
+            {
+                obj.Activate(squad);
+            }
+            
+            if (obj.Squad == squad)
+            {
+                dude.gameObject.SetActive(!obj.hideDudes);
+            }
         }
     }
 
@@ -95,6 +104,16 @@ public class SquadController: MonoBehaviour
         if (myDudes.Length == 0)
         {
             gameOverScreen.SetActive(true);
+        }
+
+        var midPointAgg = myDudes.Aggregate(
+            new KeyValuePair<int, Vector3>(0, Vector3.zero),
+            (acc, dude) => new KeyValuePair<int, Vector3>(acc.Key + 1, acc.Value + dude.transform.position));
+        if (midPointAgg.Key > 0)
+        {
+            var midPoint = midPointAgg.Value / midPointAgg.Key;
+            midPoint.y = 0;
+            gunshipMovement.focalPoint = midPoint;
         }
     }
 

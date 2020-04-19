@@ -81,7 +81,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5552281963870192984, guid: df742000d343beb4f83ca1ed8f0592fb, type: 3}
       propertyPath: maxHp
-      value: 100
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 8878393952267840457, guid: df742000d343beb4f83ca1ed8f0592fb, type: 3}
       propertyPath: m_Speed

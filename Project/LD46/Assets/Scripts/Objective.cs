@@ -64,7 +64,7 @@ public partial class Objective: MonoBehaviour
         foreach (var dude in dudes)
         {
             dude.canAttack = !disableAttacking;
-            dude.gameObject.SetActive(!hideDudes);
+            //dude.gameObject.SetActive(!hideDudes);
         }
     }
 
@@ -81,6 +81,11 @@ public partial class Objective: MonoBehaviour
 
             foreach (var dude in dudes)
             {
+                if (!dude.gameObject.activeSelf)
+                {
+                    dude.transform.position = transform.position;
+                }
+
                 dude.canAttack = true;
                 dude.gameObject.SetActive(true);
             }
@@ -94,13 +99,7 @@ public partial class Objective: MonoBehaviour
     private void Update()
     {
         var now = Time.time;
-        var deadline = Deadline;
         var scanDelta = now - lastScan;
-
-        if (deadline.HasValue)
-        {
-            return;
-        }
 
         if (scanDelta > scanInterval)
         {
@@ -111,7 +110,7 @@ public partial class Objective: MonoBehaviour
                 var dude = collider.GetComponentInParent<Dude>();
                 if (dude && dude.squad)
                 {
-                    dude.squad.TriggerEnterObjective(this);
+                    dude.squad.TriggerEnterObjective(this, dude);
                 }
             }
         }

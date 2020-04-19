@@ -6,6 +6,7 @@ public class DudeUI: MonoBehaviour
 {
     public Dude target;
     public Slider hpSlider;
+    public Text name;
 
     private Healthy healthy;
 
@@ -17,5 +18,6 @@ public class DudeUI: MonoBehaviour
     private void Update()
     {
         hpSlider.value = healthy.HPFraction;
+        name.text = target.gameObject.name;
     }
 }

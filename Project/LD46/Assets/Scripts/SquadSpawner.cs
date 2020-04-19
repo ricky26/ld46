@@ -28,7 +28,7 @@ public class SquadSpawner: MonoBehaviour
     private void Update()
     {
         var now = Time.time;
-        if ((nextSpawnTime > now) || (team.EnemyDudes.Length == 0))
+        if (nextSpawnTime > now)
         {
             return;
         }

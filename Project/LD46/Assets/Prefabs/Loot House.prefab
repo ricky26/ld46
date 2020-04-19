@@ -78,7 +78,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   description: Looting a Building
   kind: 0
-  duration: 5
+  duration: 10
   activateRadius: 2
   hideDudes: 1
   disableAttacking: 0
@@ -126,8 +126,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objective: {fileID: 4910982594866266997}
   lootTable: {fileID: 11400000, guid: 74dbe65c3d2d8f24a8903c8e47a10761, type: 2}
+  dudeConfig: {fileID: 11400000, guid: cfe525cf6253f0f43a64eb558348a676, type: 2}
+  itemTable: {fileID: 11400000, guid: 6f1e2ddb71fe09943a0004f9da28401f, type: 2}
   minLootTime: 0.3
   maxLootTime: 1.2
+  findDudeChance: 0.2
+  dudePrefab: {fileID: 5378549925730461353, guid: df742000d343beb4f83ca1ed8f0592fb, type: 3}
 --- !u!1001 &4780628680939398153
 PrefabInstance:
   m_ObjectHideFlags: 0
