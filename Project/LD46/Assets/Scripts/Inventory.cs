@@ -87,7 +87,7 @@ public class Inventory: ScriptableObject
         return true;
     }
 
-    public bool Insert(Vector2Int insertPos, ref InventoryStack stack)
+    public bool Insert(Vector2Int insertPos, ref InventoryStack stack, Vector2Int? draggedFrom)
     {
         if (stack.quantity <= 0)
         {
@@ -98,6 +98,11 @@ public class Inventory: ScriptableObject
         {
             var maybeStack = stacks[index];
             var existingPos = OffsetToPos(index);
+            if (existingPos == draggedFrom)
+            {
+                continue;
+            }
+
             if (maybeStack.HasValue && maybeStack.Value.Intersects(existingPos, insertPos, stack.itemType.size))
             {
                 var existingStack = maybeStack.Value;
@@ -106,6 +111,12 @@ public class Inventory: ScriptableObject
                 OnStacksChanged?.Invoke();
                 return ret;
             }
+        }
+
+        if (draggedFrom.HasValue)
+        {
+            var offset = PosToOffset(draggedFrom.Value);
+            stacks[offset] = null;
         }
 
         stacks[PosToOffset(insertPos)] = stack;
@@ -117,6 +128,7 @@ public class Inventory: ScriptableObject
     {
         var index = PosToOffset(position);
         stacks[index] = stack;
+        OnStacksChanged?.Invoke();
     }
 
     public bool InsertAnywhere(ref InventoryStack stack)

@@ -9,10 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6f241055bb48d946886b43d729068f5, type: 3}
-  m_Name: Items
+  m_Script: {fileID: 11500000, guid: f06c42fefeacb8a45a08b2527bfa500a, type: 3}
+  m_Name: Dude Config
   m_EditorClassIdentifier: 
-  itemTypes:
-  - {fileID: 11400000, guid: a22d6de0d2e92264697c70b91c84f55e, type: 2}
-  - {fileID: 11400000, guid: 34c5aa59442275d4bb1149872c6716e8, type: 2}
-  weaponTypes: []
+  names:
+  - Janice
+  - Harold
+  - Bert
+  - Bart
+  - Steven
+  - Grollace
+  - Mike
+  - Bruce
+  - Taylor
+  - STEVEN
+  - Stebuen
+  - Steve

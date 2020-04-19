@@ -13,6 +13,9 @@ public class SquadController: MonoBehaviour
     public ObjectiveUI objectiveUI;
     public Text inventoryText;
     public GameObject gameOverScreen;
+    public LocalState localState;
+    public GameObject dudePrefab;
+    public Transform spawnLocation;
 
     private ObjectiveKind? nextObjectiveKind;
     private Objective currentObjective;
@@ -44,6 +47,15 @@ public class SquadController: MonoBehaviour
         nextUpdate = Time.time;
 
         squad.OnEnterObjective.AddListener(OnEnterObjective);
+
+        foreach (var loadout in localState.LoadSquad())
+        {
+            var go = Instantiate(dudePrefab, spawnLocation.position, Quaternion.identity);
+            var dude = go.GetComponent<Dude>();
+            dude.loadout = loadout;
+            dude.name = loadout.name;
+            dude.squad = squad;
+        }
     }
 
     private void OnEnterObjective(Objective obj)

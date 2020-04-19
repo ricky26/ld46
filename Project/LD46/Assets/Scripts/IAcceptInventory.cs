@@ -10,5 +10,5 @@ public interface IAcceptInventory
 
     bool CanAccept(Vector2 screenPos, InventoryStack stack, object source);
 
-    bool Accept(Vector2 screenPos, ref InventoryStack stack);
+    bool Accept(Vector2 screenPos, ref InventoryStack stack, object source);
 }

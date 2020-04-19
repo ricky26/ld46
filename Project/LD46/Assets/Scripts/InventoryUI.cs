@@ -97,8 +97,8 @@ public class InventoryUI : MonoBehaviour, IAcceptInventory
                 rectTransform.localPosition = pos;
 
                 stackUI.Stack = stack;
-                stackUI.canAccept = newStack => inventory.CanInsertAt(position, newStack, null);
-                stackUI.accept = (ref InventoryStack newStack) => inventory.Insert(position, ref newStack);
+                stackUI.canAccept = (newStack, source) => inventory.CanInsertAt(position, newStack, PosFromSource(source));
+                stackUI.accept = (ref InventoryStack newStack, object source) => inventory.Insert(position, ref newStack, PosFromSource(source));
                 stackUI.setStack = newStack =>
                 {
                     if (newStack.HasValue)
@@ -195,9 +195,10 @@ public class InventoryUI : MonoBehaviour, IAcceptInventory
         return inventory.CanInsertAt(cellPos, stack, draggedFrom);
     }
 
-    public bool Accept(Vector2 screenPos, ref InventoryStack stack)
+    public bool Accept(Vector2 screenPos, ref InventoryStack stack, object source)
     {
         var cellPos = WorldToCell(screenPos);
-        return inventory.Insert(cellPos, ref stack);
+        var draggedFrom = PosFromSource(source);
+        return inventory.Insert(cellPos, ref stack, draggedFrom);
     }
 }

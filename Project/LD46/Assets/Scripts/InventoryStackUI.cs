@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -12,11 +10,11 @@ public class InventoryStackUI: MonoBehaviour, IDragHandler, IBeginDragHandler, I
     public Text quantityText;
     public Sprite defaultSprite;
 
-    public Func<InventoryStack, bool> canAccept;
+    public Func<InventoryStack, object, bool> canAccept;
     public AcceptStack accept;
     public Action<InventoryStack?> setStack;
 
-    public delegate bool AcceptStack(ref InventoryStack stack);
+    public delegate bool AcceptStack(ref InventoryStack stack, object source);
 
     private InventoryStack? stack;
     private IAcceptInventory lastDragOver;
@@ -38,12 +36,12 @@ public class InventoryStackUI: MonoBehaviour, IDragHandler, IBeginDragHandler, I
 
     public bool CanAccept(Vector2 screenPos, InventoryStack stack, object source)
     {
-        return (canAccept != null) && canAccept(stack);
+        return (canAccept != null) && canAccept(stack, source);
     }
 
-    public bool Accept(Vector2 screenPos, ref InventoryStack stack)
+    public bool Accept(Vector2 screenPos, ref InventoryStack stack, object source)
     {
-        return (accept != null) && accept(ref stack);
+        return (accept != null) && accept(ref stack, source);
     }
     
     public void ShowDragPreview(Vector2 screenPos, InventoryStack stack, object source)
@@ -77,23 +75,16 @@ public class InventoryStackUI: MonoBehaviour, IDragHandler, IBeginDragHandler, I
             return;
         }
 
-        dragPreview.SetPosition(eventData.position);
-
-        var parentInventory = GetComponentInParent<InventoryUI>();
         var newDragOver = eventData.pointerCurrentRaycast.gameObject?.GetComponentInParent<IAcceptInventory>();
+        dragPreview.SetPosition(eventData.position);
 
         if ((lastDragOver != null) && (newDragOver != lastDragOver))
         {
             lastDragOver.ClearDragPreview();
         }
-        lastDragOver = newDragOver;
 
-        if (newDragOver != null)
-        {
-            //var cellPos = lastDragOver.WorldToCell(dragPreview.TopLeftFromMid(eventData.position));
-            //var draggedFrom = (parentInventory && ReferenceEquals(lastDragOver, parentInventory)) ? stack.Value.position : (Vector2Int?)null;
-            lastDragOver.ShowDragPreview(eventData.position, stack.Value, this);// draggedFrom);
-        }
+        lastDragOver = newDragOver;
+        lastDragOver?.ShowDragPreview(eventData.position, stack.Value, this);
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -112,31 +103,13 @@ public class InventoryStackUI: MonoBehaviour, IDragHandler, IBeginDragHandler, I
 
             var stack = this.stack.Value;
             var parentInventory = GetComponentInParent<InventoryUI>();
-            //var oldPos = stack.position;
-            //var cellPos = dragOverInventory.WorldToCell(dragPreview.TopLeftFromMid(eventData.position));
-            //var draggedFrom = (parentInventory && ReferenceEquals(lastDragOver, parentInventory)) ? stack.position : (Vector2Int?)null;
-            if (lastDragOver.CanAccept(eventData.position, stack, this)) //draggedFrom))
+            if (lastDragOver.CanAccept(eventData.position, stack, this))
             {
-                /*if (parentInventory)
-                {
-                    parentInventory.Inventory.RemoveAt(stack.position);
-                }*/
-
-                if (lastDragOver.Accept(eventData.position, ref stack))
-                {
-                    setStack(null);
-                }
-                else
+                setStack(null);
+                if (!lastDragOver.Accept(eventData.position, ref stack, this))
                 {
                     setStack(stack);
                 }
-
-                //stack.position = cellPos;
-                /*if (!dragOverInventory.Inventory.Insert(ref stack))
-                {
-                    stack.position = oldPos;
-                    parentInventory.Inventory.Insert(ref stack);
-                }*/
             }
         }
     }

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Linq;
+using UnityEngine;
 
 public class ExtractSquad : MonoBehaviour
 {
@@ -17,6 +19,13 @@ public class ExtractSquad : MonoBehaviour
         {
             team.layDownArms = true;
         }
+
+        var dudes = squad.GetDudes().Select(dude => dude.loadout).Where(x => x).ToArray();
+        var rax = new DudeLoadout[localState.barracks.Length + dudes.Length];
+        Array.Copy(dudes, 0, rax, 0, dudes.Length);
+        Array.Copy(localState.barracks, 0, rax, dudes.Length, localState.barracks.Length);
+        localState.barracks = rax;
+        localState.SaveAll();
 
         endGameScreen.SetActive(true);
     }

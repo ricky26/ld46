@@ -12,10 +12,13 @@ public class LocalState: MonoBehaviour
     public Inventory pockets;
     public Inventory stash;
     public GlobalSettings global;
+    public DudeLoadout[] barracks;
 
     public string GlobalPath => Path.Combine(Application.persistentDataPath, "global.json");
     public string PocketsPath => Path.Combine(Application.persistentDataPath, "pockets.json");
     public string StashPath => Path.Combine(Application.persistentDataPath, "stash.json");
+    public string BarracksPath => Path.Combine(Application.persistentDataPath, "barracks.json");
+    public string SquadPath => Path.Combine(Application.persistentDataPath, "squad.json");
 
     private void Start()
     {
@@ -29,6 +32,8 @@ public class LocalState: MonoBehaviour
         stash.name = "Stash";
         stash.OnStacksChanged.AddListener(SaveAll);
 
+        barracks = LoadJson(BarracksPath, () => Array.Empty<SerializedDude>()).Select(Deserialize).ToArray();
+
         pocketsUI?.SetInventory(pockets);
         stashUI?.SetInventory(stash);
     }
@@ -36,11 +41,27 @@ public class LocalState: MonoBehaviour
     public void SaveAll()
     {
         SaveJson(GlobalPath, global);
+        SaveJson(BarracksPath, barracks.Select(Serialize).ToArray());
         SaveInventory(PocketsPath, pockets);
         SaveInventory(StashPath, stash);
     }
 
-    private T LoadJson<T>(string path, Func<T> factory)
+    public DudeLoadout[] LoadSquad()
+    {
+        var dudes = LoadJson(SquadPath, () => Array.Empty<SerializedDude>()).Select(Deserialize).ToArray();
+        if (File.Exists(SquadPath))
+        {
+            File.Delete(SquadPath);
+        }
+        return dudes;
+    }
+
+    public void SaveSquad(DudeLoadout[] dudes)
+    {
+        SaveJson(SquadPath, dudes.Select(Serialize).ToArray());
+    }
+
+    public static T LoadJson<T>(string path, Func<T> factory)
     {
         if (!File.Exists(path))
         {
@@ -51,7 +72,7 @@ public class LocalState: MonoBehaviour
         return JsonConvert.DeserializeObject<T>(contents);
     }
 
-    private void SaveJson(string path, object value)
+    public static void SaveJson(string path, object value)
     {
         var contents = JsonConvert.SerializeObject(value);
         File.WriteAllText(path, contents);
@@ -129,6 +150,23 @@ public class LocalState: MonoBehaviour
         };
     }
 
+    private DudeLoadout Deserialize(SerializedDude src)
+    {
+        var dest = DudeLoadout.Create();
+        dest.name = src.name;
+        dest.weapon = Deserialize(src.weapon);
+        return dest;
+    }
+
+    private SerializedDude Serialize(DudeLoadout dude)
+    {
+        return new SerializedDude
+        {
+            name = dude.name,
+            weapon = Serialize(dude.weapon),
+        };
+    }
+
     [Serializable]
     private struct SerializedInventoryStack
     {
@@ -143,10 +181,16 @@ public class LocalState: MonoBehaviour
         public SerializedInventoryStack?[] stacks;
     }
 
+    [Serializable]
+    private struct SerializedDude
+    {
+        public string name;
+        public SerializedInventoryStack weapon;
+    }
 }
 
 [Serializable]
-public struct GlobalSettings
+public class GlobalSettings
 {
     public long nextDude;
 
@@ -154,7 +198,7 @@ public struct GlobalSettings
 
     public static long ToUnixTimestamp(DateTime dt)
     {
-        return (long)DateTime.UtcNow.Subtract(unixEpoch).TotalSeconds;
+        return (long)dt.Subtract(unixEpoch).TotalSeconds;
     }
 
     public static DateTime FromUnixTimestamp(long ts)
@@ -166,7 +210,7 @@ public struct GlobalSettings
     {
         return new GlobalSettings
         {
-            nextDude = ToUnixTimestamp(DateTime.UtcNow.AddMinutes(5)),
+            nextDude = ToUnixTimestamp(DateTime.UtcNow),
         };
     }
 }
